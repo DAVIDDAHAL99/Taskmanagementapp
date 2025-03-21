@@ -1,4 +1,5 @@
-import {useState} from "react";
+import { use } from "react";
+import {useState,useCallback} from "react";
 
 function TaskItem({ task, index, removeTask,editTask }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -12,12 +13,13 @@ function TaskItem({ task, index, removeTask,editTask }) {
   const handleDescriptionChange = (e) => {
     setEditedDescription(e.target.value);
   };
-  const handleSave = () => {
+  const handleSave = useCallback( () => {
     if (!editedTitle.trim() || !editedDescription.trim()) return;
     editTask(index, { title: editedTitle, description: editedDescription,category: editedCategory });
     setIsEditing(false);
-  };
-  const getCategoryColor = (category) => {
+  },[editedDescription,editTask,editedTitle,editedCategory]);
+
+  const getCategoryColor = useCallback((category) => {
     switch (category) {
       case "Work":
         return "bg-blue-200 text-blue-800"; 
@@ -28,7 +30,7 @@ function TaskItem({ task, index, removeTask,editTask }) {
       // default:
       //   return "bg-gray-200 text-gray-800"; 
     }
-  };
+  },[]);
 
     return (
       <div className="p-4 bg-white shadow-md rounded-lg flex justify-between items-start">

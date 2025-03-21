@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 function TaskInput({ addTask }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory]= useState("Work");
 
-  const handleSubmit = (e) => {
+  const handleSubmit =useCallback( (e) => {
     e.preventDefault();
     if (!title.trim() || !description.trim()) return;
     addTask({ title, description , category });
     setTitle("");
     setDescription("");
     setCategory("Work");
-  };
+  },[title,description,category,addTask]);
 
   return (
     <div className="mb-6 p-4 bg-white shadow-md rounded-lg">
