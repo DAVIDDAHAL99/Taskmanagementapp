@@ -5,14 +5,22 @@ function TaskInput({ addTask }) {
   const [description, setDescription] = useState("");
   const [category, setCategory]= useState("Work");
 
-  const handleSubmit =useCallback( (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     if (!title.trim() || !description.trim()) return;
-    addTask({ title, description , category });
+  
+    const newTask = {
+      item: title, 
+      description: description,  
+      tag: category  
+    };
+  
+    addTask(newTask);  
+  
     setTitle("");
     setDescription("");
     setCategory("Work");
-  },[title,description,category,addTask]);
+  }, [title, description, category, addTask]);
 
   return (
     <div className="mb-6 p-4 bg-white shadow-md rounded-lg">

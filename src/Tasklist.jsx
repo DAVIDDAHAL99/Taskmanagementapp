@@ -3,10 +3,10 @@ import { useMemo } from "react";
 
 function TaskList({ tasks, removeTask , editTask }) {
   const taskItems = useMemo(() => {
-    return tasks.map ((task,index)=>(
-      <TaskItem key={index} task={task} index={index} removeTask={removeTask} editTask={editTask}  />
+    return tasks.map((task) => (
+      <TaskItem key={task.id} task={task} removeTask={removeTask} editTask={editTask} />
     ));
-  },[tasks,removeTask, editTask]);
+  }, [tasks, removeTask, editTask]);
   return (
     <div className="mt-6">
       <h3 className="text-2xl font-semibold mb-3">Tasks</h3>
@@ -20,5 +20,6 @@ function TaskList({ tasks, removeTask , editTask }) {
     </div>
   );
 }
+
 
 export default TaskList;
