@@ -16,8 +16,9 @@ function App() {
 
   useEffect(() => {
     const fetchTasks = async () => {
+      if (!user) return;
       try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(`${API_URL}?userId=${user.sub}`);
         console.log("Fetched tasks:", response.data); 
         setTasks(response.data);
       } catch (error) {
@@ -26,18 +27,23 @@ function App() {
     };
   
     fetchTasks();
-  }, []);
+  }, [user]);
 
   
   const addTask = useCallback(async (task) => {
+    if (!user) return;
+    const taskWithUserId={
+      ...task,
+      userId: user.sub,
+    };
     try {
-      const response = await axios.post(API_URL, task);  
+      const response = await axios.post(API_URL, taskWithUserId);  
       console.log("Task added:", response.data);  
       setTasks((prevTasks) => [...prevTasks, response.data]); 
     } catch (error) {
       console.error("Error adding task:", error);
     }
-  }, []);
+  }, [user]);
   const removeTask = useCallback(async (id) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
@@ -49,15 +55,23 @@ function App() {
   
 
   const editTask = useCallback(async (id, updatedTask) => {
+    if (!user) return;
+  
+    const updatedWithUserId = {
+      ...updatedTask,
+      userId: user.sub,
+    };
+  
     try {
-      const response = await axios.put(`${API_URL}/${id}`, updatedTask);
+      const response = await axios.put(`${API_URL}/${id}`, updatedWithUserId);
       setTasks((prevTasks) =>
         prevTasks.map((task) => (task.id === id ? response.data : task))
       );
     } catch (error) {
       console.error("Error updating task:", error);
     }
-  }, []);
+  }, [user]);
+  
   const filteredTasks = filter === "All"
   ? tasks
   : tasks.filter((task) => task.tag.trim().toLowerCase() === filter.toLowerCase());
