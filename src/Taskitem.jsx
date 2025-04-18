@@ -11,11 +11,22 @@ function TaskItem({ task, removeTask, editTask }) {
 
   const handleSave = useCallback(() => {
     if (!editedTitle.trim() || !editedDescription.trim()) return;
-    editTask(task.id, { item: editedTitle, description: editedDescription, tag: editedCategory });
+    editTask(task.id, {
+      item: editedTitle,
+      description: editedDescription,
+      tag: editedCategory,
+      completed: task.completed,
+    });
     setIsEditing(false);
-  }, [editedTitle, editedDescription, editedCategory, editTask, task.id]);
+  }, [editedTitle, editedDescription, editedCategory, task.completed, editTask, task.id]);
 
-  
+  const toggleComplete = () => {
+    editTask(task.id, {
+      ...task,
+      completed: !task.completed,
+    });
+  };
+
   const getCategoryColor = useCallback((category) => {
     switch (category) {
       case "Work":
@@ -25,14 +36,14 @@ function TaskItem({ task, removeTask, editTask }) {
       case "Urgent":
         return "bg-red-200 text-red-800";
       default:
-        return "bg-gray-200 text-gray-800"; 
+        return "bg-gray-200 text-gray-800";
     }
   }, []);
 
-  const categoryClass = getCategoryColor(task.tag); 
+  const categoryClass = getCategoryColor(task.tag);
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg flex justify-between items-start">
+    <div className="p-3 bg-white shadow-sm rounded-md flex justify-between items-start min-h-[80px]">
       {isEditing ? (
         <div className="flex flex-col gap-2 w-full">
           <input
@@ -73,26 +84,53 @@ function TaskItem({ task, removeTask, editTask }) {
         </div>
       ) : (
         <div className="w-full">
-          <h4 className="text-lg font-semibold">{task.item}</h4>
-          <p className="text-gray-600">{task.description}</p>
-          <p className={`text-sm font-semibold px-2 py-1 rounded-md w-max ${categoryClass}`}>
-            {task.tag} 
-          </p>
-          <div className="flex justify-end gap-2 mt-2">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200"
-            >
-              Edit
-            </button>
+          {/* Top row with title and checkbox */}
+          <div className="flex justify-between items-start">
+            <div>
+              <h4
+                className={`text-lg font-semibold ${
+                  task.completed ? "line-through text-gray-400" : ""
+                }`}
+              >
+                {task.item}
+              </h4>
+              <p className={`text-gray-600 ${task.completed ? "line-through" : ""}`}>
+                {task.description}
+              </p>
+              <p className={`text-sm font-semibold px-2 py-1 rounded-md w-max ${categoryClass}`}>
+                {task.tag}
+              </p>
+            </div>
 
-            <button
-              onClick={() => removeTask(task.id)}
-              className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200"
-            >
-              Delete
-            </button>
+            <div className="flex items-center mt-1">
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={toggleComplete}
+                className="mr-1"
+              />
+              <span className="text-sm">Completed</span>
+            </div>
           </div>
+
+          {/* Bottom right: Edit/Delete only if NOT completed */}
+          {!task.completed && (
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => removeTask(task.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200"
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
