@@ -11,6 +11,8 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false); 
+
 
 
   useEffect(() => {
@@ -60,9 +62,12 @@ function App() {
     }
   }, [user]);
 
-  const filteredTasks = filter === "All"
-    ? tasks
-    : tasks.filter((task) => task.tag.trim().toLowerCase() === filter.toLowerCase());
+  const filteredTasks = tasks.filter((task) => {
+    const matchesFilter = filter === "All" || task.tag.trim().toLowerCase() === filter.toLowerCase();
+    const matchesCompleted = showCompleted ? true : !task.completed;  // NEW: Hide completed by default
+    return matchesFilter && matchesCompleted;
+  });
+  
 
   if (isLoading) return <div className="text-center mt-10">Loading...</div>;
 
@@ -83,6 +88,13 @@ function App() {
             <option value="Personal">Personal</option>
             <option value="Urgent">Urgent</option>
           </select>
+          <button
+            onClick={() => setShowCompleted(!showCompleted)}
+            className="mt-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition"
+          >
+            {showCompleted ? "Hide Completed" : "Show Completed"}
+          </button>
+
         </aside>
       )}
 

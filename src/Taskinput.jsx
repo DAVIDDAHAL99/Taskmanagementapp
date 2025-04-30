@@ -3,24 +3,27 @@ import { useState, useCallback } from "react";
 function TaskInput({ addTask }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory]= useState("Work");
+  const [category, setCategory] = useState("Work");
+  const [deadline, setDeadline] = useState("");  // NEW: Deadline state
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
     if (!title.trim() || !description.trim()) return;
-  
+
     const newTask = {
-      item: title, 
-      description: description,  
-      tag: category  
+      item: title,
+      description: description,
+      tag: category,
+      deadline: deadline,  // Include deadline
     };
-  
-    addTask(newTask);  
-  
+
+    addTask(newTask);
+
     setTitle("");
     setDescription("");
     setCategory("Work");
-  }, [title, description, category, addTask]);
+    setDeadline("");
+  }, [title, description, category, deadline, addTask]);
 
   return (
     <div className="mb-6 p-4 bg-white shadow-md rounded-lg">
@@ -40,13 +43,23 @@ function TaskInput({ addTask }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <select value= {category} onChange={(e) => setCategory(e.target.value)} className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        <option value="Work">Work</option>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          <option value="Work">Work</option>
           <option value="Personal">Personal</option>
           <option value="Urgent">Urgent</option>
         </select>
-        <button 
-          type="submit" 
+        <input
+          type="date"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
+          className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+        <button
+          type="submit"
           className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-200"
         >
           Add Task
